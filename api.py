@@ -94,38 +94,3 @@ def revenue_curve(data: dict):
         "best_price": best_price,
         "best_revenue": best_revenue
     }
-# --------------------------
-# Revenue Curve (Graph Data)
-# --------------------------
-@app.post("/revenue_curve")
-def revenue_curve(data: dict):
-
-    # Encode route
-    data["route_enc"] = int(route_encoder.transform([data["route"]])[0])
-    del data["route"]
-
-    # Price range (adaptive)
-    price_min = int(max(2000, data["base_price"] * 0.7))
-    price_max = int(min(10000, data["base_price"] * 1.4))
-    prices = np.linspace(price_min, price_max, 50)
-
-    demands = []
-    revenues = []
-
-    for p in prices:
-        d, r = compute_demand_and_revenue(data, p)
-        demands.append(d)
-        revenues.append(r)
-
-    # Find optimal price
-    best_index = int(np.argmax(revenues))
-    best_price = float(prices[best_index])
-    best_revenue = float(revenues[best_index])
-
-    return {
-        "prices": prices.tolist(),
-        "demands": demands,
-        "revenues": revenues,
-        "best_price": best_price,
-        "best_revenue": best_revenue
-    }
